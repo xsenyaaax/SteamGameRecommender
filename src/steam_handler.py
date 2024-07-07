@@ -47,6 +47,30 @@ class SteamHandler:
                 response.raise_for_status()
                 return await response.json()
 
+    async def get_steam_id64(self, url):
+        username = url.strip('/').split('/')[-1]
+        endpoint = f"{self.base_url}/ISteamUser/ResolveVanityURL/v0001/"
+        params = {
+            'key': API_KEY,
+            'vanityurl': username
+        }
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(endpoint, params=params) as response:
+                try:
+                    response.raise_for_status()
+                    data = await response.json()
+                    if data['response']['success'] == 1:
+                        return data['response']['steamid']
+                    else:
+                        raise Exception('Steam ID resolution failed')
+                except aiohttp.ClientResponseError as e:
+                    raise Exception(f"Error fetching data: {e}") from None
+                except KeyError:
+                    raise Exception('Invalid JSON response from Steam API') from None
+                except Exception as e:
+                    raise Exception(f"Error: {e}") from None
+
 
 async def test_speed():
     steam_ids = ['76561198168015547']

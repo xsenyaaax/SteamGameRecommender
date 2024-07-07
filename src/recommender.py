@@ -12,7 +12,7 @@ class Recommender:
         self.current_recommender = None  # knn with cosine similarity
         self.expanded_tags = pd.read_csv('data/expanded_tags.csv')
         self.expanded_tags.index = self.expanded_tags['AppID']
-        self.knn_cosine = joblib.load('models/tags.pkl')
+        self.knn_cosine = joblib.load('models/tags.joblib')
 
     async def recommend(self, steam_id):
         if self.current_recommender is None:

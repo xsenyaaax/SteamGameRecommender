@@ -19,6 +19,7 @@ def recommend():
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         recommended_games = loop.run_until_complete(recommender.recommend(steam_id))
+        print(recommended_games[0])
         return jsonify(recommended_games)
     except KeyError:
         return jsonify({'error': 'Steam ID not provided in request'}), 400

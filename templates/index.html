@@ -20,30 +20,52 @@
             margin-top: 20px;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
         }
-        form {
+        .form-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 80%;
+            max-width: 800px;
             background: rgba(0, 0, 0, 0.7);
             padding: 20px;
             border-radius: 10px;
-            margin: 20px 0;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
         }
-        label, input, button {
+        form {
+            width: 65%; /* Increased form width */
+            margin-right: 20px;
+        }
+        form label, form input, form button {
             display: block;
             margin: 10px 0;
         }
-        input, button {
+        form input, form button {
             padding: 10px;
             border: none;
             border-radius: 5px;
+            width: calc(100% - 20px); /* Adjusted input width */
         }
-        button {
+        form button {
             background-color: #1a73e8;
             color: #fff;
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        button:hover {
+        form button:hover {
             background-color: #0f5bb5;
+        }
+        .info {
+            width: 60%; /* Adjusted info section width */
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            font-size: 14px; /* Adjusted font size */
+        }
+        .info h3 {
+            margin-top: 0;
         }
         #recommendations {
             list-style: none;
@@ -52,19 +74,19 @@
             max-width: 800px;
         }
         #recommendations li {
-        display: flex;
-        background: rgba(0, 0, 0, 0.7);
-        margin: 10px 0;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            display: flex;
+            background: rgba(0, 0, 0, 0.7);
+            margin: 10px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         #recommendations li img {
             width: auto;
             height: auto;
             max-width: 100%;
             border-radius: 10px;
-            margin-right: 20px; /* Spacing between image and text */
+            margin-right: 20px;
         }
         .game-details {
             flex: 1;
@@ -91,11 +113,22 @@
 </head>
 <body>
     <h1>Steam Game Recommender</h1>
-    <form id="recommendationForm">
-        <label for="steam_id">Enter your Steam ID64 or Vanity URL:</label>
-        <input type="text" id="steam_id" name="steam_id" required>
-        <button type="submit">Get Recommendations</button>
-    </form>
+    <div class="form-container">
+        <form id="recommendationForm">
+            <label for="steam_id">Enter your Steam ID64 or Vanity URL:</label>
+            <input type="text" id="steam_id" name="steam_id" required>
+            <button type="submit">Get Recommendations</button>
+        </form>
+        <div class="info">
+            <h3>How to find your Steam ID</h3>
+            <p>To get your Steam ID64 or Vanity URL, follow these steps:</p>
+            <ul>
+                <li>Open Steam and go to your profile.</li>
+                <li>Your profile URL will be something like <strong>https://steamcommunity.com/id/yourusername</strong> (Vanity URL) or <strong>https://steamcommunity.com/profiles/12345678901234567</strong> (Steam ID64).</li>
+                <li>Copy the URL and paste it in the input field.</li>
+            </ul>
+        </div>
+    </div>
     <h2>Recommended Games</h2>
     <ul id="recommendations"></ul>
 

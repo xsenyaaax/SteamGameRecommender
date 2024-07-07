@@ -26,13 +26,34 @@
                 body: `steam_id=${steam_id}`
             });
             const recommendations = await response.json();
+            console.log('Received recommendations:', recommendations);  // Log received data
             const recommendationsList = document.getElementById('recommendations');
             recommendationsList.innerHTML = '';
-            recommendations.forEach(game => {
+            if (response.ok) {
+                recommendations.forEach(recommendation => {
+                    const appid = Object.keys(recommendation)[0];
+                    const game = recommendation[appid].data;
+                    console.log('Processing game:', game);  // Log each game data
+                    if (game) {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <h3>${game.name}</h3>
+                            <p>App ID: ${appid}</p>
+                            <p>Description: ${game.short_description}</p>
+                            <p>Release Date: ${game.release_date.date}</p>
+                            <p>Price: ${game.price_overview ? game.price_overview.final_formatted : 'Free'}</p>
+                            <img src="${game.header_image}" alt="${game.name}">
+                        `;
+                        recommendationsList.appendChild(listItem);
+                    } else {
+                        console.error('Game data is undefined for appid:', appid);  // Log error if game data is undefined
+                    }
+                });
+            } else {
                 const listItem = document.createElement('li');
-                listItem.textContent = game;
+                listItem.textContent = recommendations.error || 'An error occurred';
                 recommendationsList.appendChild(listItem);
-            });
+            }
         });
     </script>
 </body>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Steam Game Recommender</title>
+</head>
+<body>
+    <h1>Steam Game Recommender</h1>
+    <form id="recommendationForm">
+        <label for="steam_id">Enter your Steam ID:</label>
+        <input type="text" id="steam_id" name="steam_id" required>
+        <button type="submit">Get Recommendations</button>
+    </form>
+    <h2>Recommended Games</h2>
+    <ul id="recommendations"></ul>
+
+    <script>
+        document.getElementById('recommendationForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const steam_id = document.getElementById('steam_id').value;
+            const response = await fetch('/recommend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `steam_id=${steam_id}`
+            });
+            const recommendations = await response.json();
+            const recommendationsList = document.getElementById('recommendations');
+            recommendationsList.innerHTML = '';
+            recommendations.forEach(game => {
+                const listItem = document.createElement('li');
+                listItem.textContent = game;
+                recommendationsList.appendChild(listItem);
+            });
+        });
+    </script>
+</body>
+</html>

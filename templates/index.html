@@ -2,7 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Steam Game Recommender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://source.unsplash.com/random/1920x1080?gaming') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            margin-top: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+        form {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        label, input, button {
+            display: block;
+            margin: 10px 0;
+        }
+        input, button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #1a73e8;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0f5bb5;
+        }
+        #recommendations {
+            list-style: none;
+            padding: 0;
+            width: 80%;
+            max-width: 800px;
+        }
+        #recommendations li {
+            background: rgba(0, 0, 0, 0.7);
+            margin: 10px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #recommendations h3 {
+            margin: 0 0 10px 0;
+        }
+        #recommendations img {
+            width: 100%;
+            max-width: 200px;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
     <h1>Steam Game Recommender</h1>
@@ -18,41 +82,45 @@
         document.getElementById('recommendationForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const steam_id = document.getElementById('steam_id').value;
-            const response = await fetch('/recommend', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `steam_id=${steam_id}`
-            });
-            const recommendations = await response.json();
-            console.log('Received recommendations:', recommendations);  // Log received data
-            const recommendationsList = document.getElementById('recommendations');
-            recommendationsList.innerHTML = '';
-            if (response.ok) {
-                recommendations.forEach(recommendation => {
-                    const appid = Object.keys(recommendation)[0];
-                    const game = recommendation[appid].data;
-                    console.log('Processing game:', game);  // Log each game data
-                    if (game) {
-                        const listItem = document.createElement('li');
-                        listItem.innerHTML = `
-                            <h3>${game.name}</h3>
-                            <p>App ID: ${appid}</p>
-                            <p>Description: ${game.short_description}</p>
-                            <p>Release Date: ${game.release_date.date}</p>
-                            <p>Price: ${game.price_overview ? game.price_overview.final_formatted : 'Free'}</p>
-                            <img src="${game.header_image}" alt="${game.name}">
-                        `;
-                        recommendationsList.appendChild(listItem);
-                    } else {
-                        console.error('Game data is undefined for appid:', appid);  // Log error if game data is undefined
-                    }
+            try {
+                const response = await fetch('/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `steam_id=${steam_id}`
                 });
-            } else {
-                const listItem = document.createElement('li');
-                listItem.textContent = recommendations.error || 'An error occurred';
-                recommendationsList.appendChild(listItem);
+                const recommendations = await response.json();
+                console.log('Received recommendations:', recommendations);
+                const recommendationsList = document.getElementById('recommendations');
+                recommendationsList.innerHTML = '';
+                if (response.ok) {
+                    recommendations.forEach(recommendation => {
+                        const appid = Object.keys(recommendation)[0];
+                        const game = recommendation[appid].data;
+                        console.log('Processing game:', game);
+                        if (game) {
+                            const listItem = document.createElement('li');
+                            listItem.innerHTML = `
+                                <h3>${game.name}</h3>
+                                <p>App ID: ${appid}</p>
+                                <p>Description: ${game.short_description}</p>
+                                <p>Release Date: ${game.release_date.date}</p>
+                                <p>Price: ${game.price_overview ? game.price_overview.final_formatted : 'Free'}</p>
+                                <img src="${game.header_image}" alt="${game.name}">
+                            `;
+                            recommendationsList.appendChild(listItem);
+                        } else {
+                            console.error('Game data is undefined for appid:', appid);
+                        }
+                    });
+                } else {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = recommendations.error || 'An error occurred';
+                    recommendationsList.appendChild(listItem);
+                }
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
             }
         });
     </script>

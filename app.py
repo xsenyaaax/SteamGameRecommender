@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify, render_template
 import asyncio
-from SteamGameRecommender.src.recommender import Recommender
+from src.recommender import Recommender
+import warnings
 
 app = Flask(__name__)
 recommender = Recommender()
+warnings.filterwarnings('ignore')  # For scikit warning
 
 
 @app.route('/')
@@ -28,7 +30,7 @@ def recommend():
 
         print(f'Resolved Steam ID: {steam_id}')
 
-        # Now you have the SteamID64, proceed with recommendation
+        # Now we have the SteamID64, proceed with recommendation
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         recommended_games = loop.run_until_complete(recommender.recommend(steam_id, exclude_owned_games=exclude_owned))
@@ -38,8 +40,8 @@ def recommend():
     except KeyError:
         return jsonify({'error': 'Steam ID or Vanity URL not provided in request'}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Bad request'}), 500
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

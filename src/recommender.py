@@ -1,6 +1,5 @@
 import time
-
-from SteamGameRecommender.src.steam_handler import SteamHandler
+from src.steam_handler import SteamHandler
 import pandas as pd
 import joblib
 import asyncio
@@ -38,6 +37,7 @@ class Recommender:
         # could be extended to other models
         if self.current_recommender is None:
             games = await self.steam_handler.get_recently_played_games(steam_id)
+            print(games)
             for game in games:
                 if len(games) <= 2:
                     recommended_ids.update(self.knn_recommender(game['appid'], num_recommendations=12))

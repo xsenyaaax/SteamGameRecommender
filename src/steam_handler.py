@@ -1,7 +1,5 @@
 import aiohttp
-import asyncio
-from SteamGameRecommender.src.conf import API_KEY
-import time
+from src.conf import API_KEY
 
 
 class SteamHandler:
@@ -40,6 +38,7 @@ class SteamHandler:
                 response.raise_for_status()
                 data = await response.json()
                 try:
+                    print(data)
                     return data['response']['games']
                 except KeyError:
                     return None

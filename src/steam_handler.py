@@ -20,7 +20,11 @@ class SteamHandler:
         async with aiohttp.ClientSession() as session:
             async with session.get(endpoint, params=params) as response:
                 response.raise_for_status()
-                return await response.json()
+                data = await response.json()
+                try:
+                    return data['response']['games']
+                except KeyError:
+                    return None
 
     async def get_recently_played_games(self, steam_id, count=None, format='json'):
         endpoint = f"{self.base_url}/IPlayerService/GetRecentlyPlayedGames/v0001/"
@@ -71,7 +75,7 @@ class SteamHandler:
                 except Exception as e:
                     raise Exception(f"Error: {e}") from None
 
-
+"""
 async def test_speed():
     steam_ids = ['76561198168015547']
     steam_handler = SteamHandler()
@@ -106,8 +110,18 @@ async def test_app_info():
     end_time = time.time()
     print(f'Took {end_time - start_time} seconds to get {len(results)} results')
     # for result in results:
-    #    print(result)     
-
+    #    print(result)
+async def owned_games_request():
+    steam_ids = ['76561198168015547']
+    steam_handler = SteamHandler()
+    tasks = []
+    for steam_id in steam_ids:
+        tasks.append(steam_handler.get_owned_games(steam_id, include_appinfo=False))
+    results = await asyncio.gather(*tasks)
+    for result in results:
+        print(result)
+"""
 # asyncio.run(test_speed())
 # asyncio.run(test_app_info())
 # asyncio.run(test_request())
+#asyncio.run(owned_games_request())

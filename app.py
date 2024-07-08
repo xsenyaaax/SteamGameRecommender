@@ -15,7 +15,8 @@ def index():
 def recommend():
     try:
         steam_input = request.form['steam_id']
-        print(f'Got steam input: {steam_input}')
+        exclude_owned = request.form.get('exclude_owned') == 'true'
+        print(f'Got steam input: {steam_input}, exclude_owned: {exclude_owned}')
 
         # Check if the input is a vanity URL and convert it to SteamID64
         if steam_input.isdigit():  # Check if input is already a SteamID64
@@ -30,7 +31,7 @@ def recommend():
         # Now you have the SteamID64, proceed with recommendation
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-        recommended_games = loop.run_until_complete(recommender.recommend(steam_id))
+        recommended_games = loop.run_until_complete(recommender.recommend(steam_id, exclude_owned_games=exclude_owned))
 
         return jsonify(recommended_games)
 

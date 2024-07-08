@@ -40,7 +40,7 @@ class Recommender:
             games = await self.steam_handler.get_recently_played_games(steam_id)
             for game in games:
                 if len(games) <= 2:
-                    recommended_ids.update(self.knn_recommender(game['appid'], num_recommendations=10))
+                    recommended_ids.update(self.knn_recommender(game['appid'], num_recommendations=12))
 
         if exclude_owned_games:
             print("Getting owned games")

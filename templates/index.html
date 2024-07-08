@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Steam Game Recommender</title>
     <style>
-        body {
+    body {
         font-family: Arial, sans-serif;
-        background: url('https://source.unsplash.com/1920x1080/?gaming') no-repeat center center fixed;
+        background: url('static/images/steam-logo.jfif') no-repeat center center fixed;
         background-size: cover;
         color: #ffffff;
         margin: 0;
@@ -19,7 +19,12 @@
 
     h1 {
         margin-top: 20px;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        color: #ffffff;
+        text-shadow: none;
+    }
+    h2 {
+        color: #000000;
+        text-shadow: none;
     }
 
     .form-container {
@@ -69,8 +74,42 @@
         align-items: center;
     }
 
-    .checkbox-container input {
-        margin-right: 10px;
+    .checkbox-container input[type="checkbox"] {
+        display: none;
+    }
+
+    .checkbox-container label {
+        position: relative;
+        padding-left: 35px;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .checkbox-container label:before, .checkbox-container label:after {
+        content: '';
+        position: absolute;
+        transition: all 0.3s;
+    }
+
+    .checkbox-container label:before {
+        width: 25px;
+        height: 25px;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #fff;
+        border-radius: 5px;
+        box-shadow: inset 0 0 0 2px #1a73e8;
+    }
+
+    .checkbox-container input[type="checkbox"]:checked + label:after {
+        width: 8px;
+        height: 14px;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        border-right: 3px solid #1a73e8;
+        border-bottom: 3px solid #1a73e8;
     }
 
     .info {
@@ -149,8 +188,8 @@
             <label for="steam_id">Enter your Steam ID64 or Vanity URL:</label>
             <input type="text" id="steam_id" name="steam_id" required>
             <div class="checkbox-container">
-                <label for="exclude_owned">Exclude owned games</label>
                 <input type="checkbox" id="exclude_owned" name="exclude_owned">
+                <label for="exclude_owned">Exclude owned games</label>
             </div>
             <button type="submit">Get Recommendations</button>
         </form>
@@ -164,24 +203,14 @@
             </ul>
         </div>
     </div>
-    <h2>Recommended Games</h2>
     <ul id="recommendations"></ul>
 
-    <div class="loading-text" id="loadingText">Getting recommendations</div>
 
     <script>
-    const loadingText = document.getElementById('loadingText');
-
     document.getElementById('recommendationForm').addEventListener('submit', async function(event) {
         event.preventDefault();
         const steam_id = document.getElementById('steam_id').value;
         const exclude_owned = document.getElementById('exclude_owned').checked;
-
-        // Update loading text
-        loadingText.textContent = 'Getting recommendations';
-
-        // Show loading text
-        loadingText.style.display = 'block';
 
         try {
             const response = await fetch('/recommend', {
@@ -196,8 +225,6 @@
             const recommendationsList = document.getElementById('recommendations');
             recommendationsList.innerHTML = '';
 
-            // Hide loading text after receiving response
-            loadingText.style.display = 'none';
 
             if (response.ok) {
                 recommendations.forEach(recommendation => {
@@ -228,8 +255,6 @@
             }
         } catch (error) {
             console.error('Error fetching recommendations:', error);
-            // Hide loading text on error
-            loadingText.style.display = 'none';
         }
     });
     </script>

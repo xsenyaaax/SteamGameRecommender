@@ -16,7 +16,7 @@ class Recommender:
         self.knn_cosine = joblib.load('models/tags.joblib')
         print("Loading Recommender finished...")
 
-    async def recommend(self, steam_id, exclude_owned_games=True):
+    async def recommend(self, steam_id, exclude_owned_games=False):
         """
         Function that:
         1)gets recommendation from some chosen model as steam game ids
@@ -39,15 +39,19 @@ class Recommender:
         if self.current_recommender is None:
             games = await self.steam_handler.get_recently_played_games(steam_id)
             for game in games:
-                recommended_ids.update(self.knn_recommender(game['appid']))
+                if len(games) <= 2:
+                    recommended_ids.update(self.knn_recommender(game['appid'], num_recommendations=10))
 
         if exclude_owned_games:
+            print("Getting owned games")
             owned_games = await self.steam_handler.get_owned_games(steam_id, include_appinfo=False)
+            #print(owned_games)
             owned_games_ids = set()
             for game in owned_games:
-                owned_games.add(game['appid'])
+                owned_games_ids.add(game['appid'])
             # exclude already owned games
             recommended_ids.difference_update(owned_games_ids)
+            #print(f"Recommended ids after difference : {recommended_ids}")
 
         # get game info from steam api
         tasks = []
